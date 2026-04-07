@@ -1,0 +1,13 @@
+[project]
+name = "technical-event-coordinator"
+version = "0.1.0"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "requests",
+    "openai",
+    "openenv"
+]
+
+[project.scripts]
+start = "main:app"
