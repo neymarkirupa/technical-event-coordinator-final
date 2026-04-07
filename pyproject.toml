@@ -1,6 +1,8 @@
 [project]
 name = "technical-event-coordinator"
 version = "0.1.0"
+description = "Technical Event Coordinator Environment"
+
 dependencies = [
     "fastapi",
     "uvicorn",
@@ -10,4 +12,4 @@ dependencies = [
 ]
 
 [project.scripts]
-start = "main:app"
+server = "app:app"
