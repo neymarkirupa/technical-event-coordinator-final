@@ -1,15 +1,13 @@
 [project]
 name = "technical-event-coordinator"
 version = "0.1.0"
-description = "Technical Event Coordinator Environment"
-
 dependencies = [
     "fastapi",
     "uvicorn",
     "requests",
     "openai",
-    "openenv"
+    "openenv>=0.1.13"
 ]
 
 [project.scripts]
-server = "app:app"
+server = "main:app"
