@@ -1,18 +1,35 @@
 from fastapi import FastAPI
+from pydantic import BaseModel
+from typing import Dict, Optional
 
 app = FastAPI()
 
-# Simple in-memory state
 state = {}
 
-@app.post("/reset")
-def reset(data: dict):
-    task_id = data.get("task_id", "easy")
+# ✅ Define request model (IMPORTANT)
+class ResetRequest(BaseModel):
+    task_id: Optional[str] = "easy"
 
-    # Example environment state
+
+class StepRequest(BaseModel):
+    task_id: Optional[str] = "easy"
+    assignments: Dict = {}
+
+
+# ✅ RESET
+@app.post("/reset")
+def reset(req: ResetRequest = ResetRequest()):
+    task_id = req.task_id
+
     state[task_id] = {
-        "rooms": ["R1", "R2"],
-        "teams": ["T1", "T2"],
+        "rooms": [
+            {"id": "R1", "capacity": 2, "outlets": 2},
+            {"id": "R2", "capacity": 2, "outlets": 2}
+        ],
+        "teams": [
+            {"id": "T1"},
+            {"id": "T2"}
+        ],
         "assignments": {}
     }
 
@@ -22,10 +39,11 @@ def reset(data: dict):
     }
 
 
+# ✅ STEP
 @app.post("/step")
-def step(data: dict):
-    task_id = data.get("task_id", "easy")
-    assignments = data.get("assignments", {})
+def step(req: StepRequest):
+    task_id = req.task_id
+    assignments = req.assignments
 
     state[task_id]["assignments"] = assignments
 
@@ -33,5 +51,5 @@ def step(data: dict):
         "observation": state[task_id],
         "reward": 1.0,
         "done": True,
-        "info": {"message": "Step successful"}
+        "info": {}
     }
