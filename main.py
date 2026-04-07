@@ -1,0 +1,66 @@
+from fastapi import FastAPI
+from pydantic import BaseModel
+from typing import Dict
+from env.environment import TechnicalEventEnv, Action
+from env.grader import grade_task, grade_all_tasks, compute_final_score
+from env.tasks import get_all_tasks, get_task
+
+app = FastAPI(title="Technical Event Coordinator Environment")
+
+# Global environment store
+envs: Dict[str, TechnicalEventEnv] = {}
+
+class StepRequest(BaseModel):
+    task_id: str
+    assignments: Dict[str, str]
+
+class ResetRequest(BaseModel):
+    task_id: str
+
+# --- Routes ---
+
+@app.get("/")
+def root():
+    return {"message": "Technical Event Coordinator Environment is running!"}
+
+@app.post("/reset")
+def reset(req: ResetRequest):
+    env = TechnicalEventEnv(task_id=req.task_id)
+    obs = env.reset()
+    envs[req.task_id] = env
+    return obs.dict()
+
+@app.get("/state/{task_id}")
+def state(task_id: str):
+    if task_id not in envs:
+        return {"error": "Environment not found! Call /reset first!"}
+    return envs[task_id].state().dict()
+
+@app.post("/step")
+def step(req: StepRequest):
+    if req.task_id not in envs:
+        return {"error": "Environment not found! Call /reset first!"}
+    action = Action(assignments=req.assignments)
+    obs, reward, done, info = envs[req.task_id].step(action)
+    return {
+        "observation": obs.dict(),
+        "reward": reward.dict(),
+        "done": done,
+    }
+
+@app.get("/tasks")
+def tasks():
+    return get_all_tasks()
+
+@app.get("/tasks/{task_id}")
+def task_detail(task_id: str):
+    return get_task(task_id)
+
+@app.post("/grade")
+def grade(req: StepRequest):
+    result = grade_task(req.task_id, req.assignments)
+    return result
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}

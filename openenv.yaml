@@ -1,0 +1,36 @@
+name: technical-event-coordinator
+version: "1.0"
+description: "An OpenEnv environment that simulates managing a large-scale technical fest. The agent must handle room assignments, scheduling conflicts, and budget crises."
+tags:
+  - openenv
+  - scheduling
+  - resource-allocation
+  - budget-management
+  - real-world
+
+tasks:
+  - id: easy
+    name: "Room Assignment"
+    difficulty: easy
+    description: "Assign 50 teams to 10 rooms based on seating and power outlet constraints."
+
+  - id: medium
+    name: "Schedule Conflict Resolution"
+    difficulty: medium
+    description: "Resolve a double-booked VIP judge conflict without creating new conflicts."
+
+  - id: hard
+    name: "Sponsor Pullout Crisis"
+    difficulty: hard
+    description: "A major sponsor pulled out. Rewrite prize distribution without going into the red."
+
+action_space: "JSON object with team to room assignments"
+observation_space: "JSON object with rooms, teams, assignments, task_id, step_count"
+
+reward:
+  min: 0.0
+  max: 1.0
+  description: "Score based on percentage of constraints satisfied"
+
+baseline_script: "inference.py"
+docker: true
