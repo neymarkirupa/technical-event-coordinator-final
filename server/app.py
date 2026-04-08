@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from pydantic import BaseModel
 from typing import Dict, Optional
 from env.environment import TechnicalEventEnv, Action
@@ -14,9 +14,6 @@ class StepRequest(BaseModel):
     task_id: str
     assignments: Dict[str, str]
 
-class ResetRequest(BaseModel):
-    task_id: Optional[str] = "easy"   # ✅ FIXED
-
 # --- Routes ---
 
 @app.get("/")
@@ -24,8 +21,18 @@ def root():
     return {"message": "Technical Event Coordinator Environment is running!"}
 
 @app.post("/reset")
-def reset(req: ResetRequest = ResetRequest()):   # ✅ FIXED (NO BODY REQUIRED)
-    task_id = req.task_id or "easy"
+async def reset(request: Request):
+    """Reset the environment. Accepts empty body or JSON with optional task_id."""
+    body = {}
+    try:
+        body = await request.json()
+    except Exception:
+        pass
+
+    task_id = "easy"
+    if isinstance(body, dict) and body.get("task_id"):
+        task_id = body["task_id"]
+
     env = TechnicalEventEnv(task_id=task_id)
     obs = env.reset()
     envs[task_id] = env
