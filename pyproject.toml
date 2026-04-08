@@ -5,8 +5,9 @@ dependencies = [
     "fastapi",
     "uvicorn",
     "requests",
-    "openai"
+    "openai",
+    "openenv>=0.2.8"
 ]
 
 [project.scripts]
-start = "server.app:main"
+server = "server.app:main"
