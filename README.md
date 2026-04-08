@@ -1,3 +1,12 @@
+---
+title: Technical Event Coordinator
+emoji: 🎯
+colorFrom: blue
+colorTo: purple
+sdk: docker
+app_port: 7860
+---
+
 # Technical Event Coordinator Environment
 
 ## Description
