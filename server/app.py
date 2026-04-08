@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from typing import Dict
+from typing import Dict, Optional
 from env.environment import TechnicalEventEnv, Action
 from env.grader import grade_task, grade_all_tasks, compute_final_score
 from env.tasks import get_all_tasks, get_task
@@ -15,7 +15,7 @@ class StepRequest(BaseModel):
     assignments: Dict[str, str]
 
 class ResetRequest(BaseModel):
-    task_id: str
+    task_id: Optional[str] = "easy"   # ✅ FIXED
 
 # --- Routes ---
 
@@ -24,17 +24,18 @@ def root():
     return {"message": "Technical Event Coordinator Environment is running!"}
 
 @app.post("/reset")
-def reset(req: ResetRequest):
-    env = TechnicalEventEnv(task_id=req.task_id)
+def reset(req: ResetRequest = ResetRequest()):   # ✅ FIXED (NO BODY REQUIRED)
+    task_id = req.task_id or "easy"
+    env = TechnicalEventEnv(task_id=task_id)
     obs = env.reset()
-    envs[req.task_id] = env
-    return obs.model_dump()   # ✅ FIXED
+    envs[task_id] = env
+    return obs.model_dump()
 
 @app.get("/state/{task_id}")
 def state(task_id: str):
     if task_id not in envs:
         return {"error": "Environment not found! Call /reset first!"}
-    return envs[task_id].state().model_dump()   # ✅ FIXED
+    return envs[task_id].state().model_dump()
 
 @app.post("/step")
 def step(req: StepRequest):
@@ -43,8 +44,8 @@ def step(req: StepRequest):
     action = Action(assignments=req.assignments)
     obs, reward, done, info = envs[req.task_id].step(action)
     return {
-        "observation": obs.model_dump(),   # ✅ FIXED
-        "reward": reward.model_dump(),     # ✅ FIXED
+        "observation": obs.model_dump(),
+        "reward": reward.model_dump(),
         "done": done,
     }
 
