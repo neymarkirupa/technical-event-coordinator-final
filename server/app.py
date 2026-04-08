@@ -28,13 +28,13 @@ def reset(req: ResetRequest):
     env = TechnicalEventEnv(task_id=req.task_id)
     obs = env.reset()
     envs[req.task_id] = env
-    return obs.dict()
+    return obs.model_dump()   # ✅ FIXED
 
 @app.get("/state/{task_id}")
 def state(task_id: str):
     if task_id not in envs:
         return {"error": "Environment not found! Call /reset first!"}
-    return envs[task_id].state().dict()
+    return envs[task_id].state().model_dump()   # ✅ FIXED
 
 @app.post("/step")
 def step(req: StepRequest):
@@ -43,8 +43,8 @@ def step(req: StepRequest):
     action = Action(assignments=req.assignments)
     obs, reward, done, info = envs[req.task_id].step(action)
     return {
-        "observation": obs.dict(),
-        "reward": reward.dict(),
+        "observation": obs.model_dump(),   # ✅ FIXED
+        "reward": reward.model_dump(),     # ✅ FIXED
         "done": done,
     }
 
