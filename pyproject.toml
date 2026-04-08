@@ -9,4 +9,4 @@ dependencies = [
 ]
 
 [project.scripts]
-start = "server.app:app"
+start = "server.app:main"
