@@ -6,7 +6,7 @@ dependencies = [
     "uvicorn",
     "requests",
     "openai",
-    "openenv>=0.2.8"
+    "openenv>=0.1.13"
 ]
 
 [project.scripts]
