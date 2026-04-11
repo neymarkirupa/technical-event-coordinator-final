@@ -8,15 +8,15 @@ assignments, get grading feedback, etc.
 import logging
 import threading
 from contextlib import asynccontextmanager
-from typing import Dict, Optional
+from typing import Dict
 
-from fastapi import FastAPI, Request, Body, HTTPException
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, HTMLResponse
 from pydantic import BaseModel
 
 from env.environment import TechnicalEventEnv, Action
-from env.grader import grade_task, grade_all_tasks, compute_final_score
+from env.grader import grade_task
 from env.tasks import get_all_tasks, get_task
 from server.landing_ui import UI_HTML
 

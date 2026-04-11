@@ -21,4 +21,8 @@ from env.tasks import get_task, get_all_tasks, run_task
 from env.grader import grade_task, grade_all_tasks, compute_final_score
 
 __version__ = "1.1.0"
-__all__ = ["TechnicalEventEnv", "Action", "Observation", "Reward"]
+__all__ = [
+    "TechnicalEventEnv", "Action", "Observation", "Reward",
+    "get_task", "get_all_tasks", "run_task",
+    "grade_task", "grade_all_tasks", "compute_final_score",
+]
