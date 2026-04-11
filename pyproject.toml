@@ -1,13 +1,45 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
 [project]
 name = "technical-event-coordinator"
-version = "0.1.0"
+version = "1.1.0"
+description = "An OpenEnv environment simulating large-scale technical fest logistics — room assignments, scheduling conflicts, and budget crises"
+requires-python = ">=3.11"
+authors = [
+    {name = "NULL BYTE"}
+]
+license = {text = "MIT"}
+keywords = ["reinforcement-learning", "scheduling", "resource-allocation", "openenv", "constraint-satisfaction"]
+classifiers = [
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
 dependencies = [
-    "fastapi",
-    "uvicorn",
+    "fastapi>=0.115.0",
+    "uvicorn>=0.30.0",
+    "pydantic>=2.0.0",
+    "pyyaml>=6.0",
+    "openai>=1.0.0",
+    "httpx>=0.27.0",
+    "python-multipart>=0.0.9",
+    "openenv-core>=0.2.0",
     "requests",
-    "openai",
-    "openenv>=0.1.13"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "httpx>=0.27.0",
 ]
 
 [project.scripts]
 server = "server.app:main"
+technical-event-coordinator = "server.app:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["*"]
+exclude = ["tests*"]

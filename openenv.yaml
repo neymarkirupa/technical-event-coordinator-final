@@ -1,36 +1,81 @@
 name: technical-event-coordinator
-version: "1.0"
-description: "An OpenEnv environment that simulates managing a large-scale technical fest. The agent must handle room assignments, scheduling conflicts, and budget crises."
+version: "1.1.0"
+description: >
+  An OpenEnv environment that simulates managing a large-scale technical fest.
+  The AI agent must deal with the messy realities of room assignments,
+  scheduling overlaps, and last-minute budget shocks — all through a simple
+  REST API. Covers constraint-satisfaction, resource allocation, and
+  crisis management across three difficulty tiers.
+
+author: NULL BYTE
+
 tags:
   - openenv
   - scheduling
   - resource-allocation
   - budget-management
   - real-world
+  - reinforcement-learning
+
+observation_space:
+  type: dict
+  description: >
+    JSON object with rooms (list of room specs with id, capacity, outlets),
+    teams (list of team specs with id, size, laptops), assignments (current
+    team→room mapping), task_id, step_count, and constraints_violated.
+
+action_space:
+  type: dict
+  description: >
+    JSON object with team-to-room assignments mapping. Each key is a team ID
+    and each value is the room ID that team is assigned to.
 
 tasks:
   - id: easy
     name: "Room Assignment"
+    description: >
+      Assign 50 registered teams to 10 rooms based on
+      seating capacity and power-outlet constraints.
     difficulty: easy
-    description: "Assign 50 teams to 10 rooms based on seating and power outlet constraints."
+    max_steps: 10
+    reward_range: [0.0, 1.0]
 
   - id: medium
     name: "Schedule Conflict Resolution"
+    description: >
+      Resolve a double-booked VIP judge conflict
+      without introducing new scheduling overlaps.
+      20 teams across 5 uniform rooms.
     difficulty: medium
-    description: "Resolve a double-booked VIP judge conflict without creating new conflicts."
+    max_steps: 10
+    reward_range: [0.0, 1.0]
 
   - id: hard
     name: "Sponsor Pullout Crisis"
+    description: >
+      A major sponsor pulled out. 50 teams must fit into
+      7 tightly capacitated rooms. Heavy contention,
+      maximum constraint pressure.
     difficulty: hard
-    description: "A major sponsor pulled out. Rewrite prize distribution without going into the red."
-
-action_space: "JSON object with team to room assignments"
-observation_space: "JSON object with rooms, teams, assignments, task_id, step_count"
+    max_steps: 10
+    reward_range: [0.0, 1.0]
 
 reward:
-  min: 0.0
-  max: 1.0
-  description: "Score based on percentage of constraints satisfied"
+  range: [0.0, 1.0]
+  dense: true
+  description: >
+    Score based on coverage (60%), balance bonus (15%),
+    minus capacity overflow penalty and outlet overflow penalty.
+    Clamped to open interval (0, 1).
+
+endpoints:
+  health:   GET  /health
+  reset:    POST /reset
+  step:     POST /step
+  state:    GET  /state/{task_id}
+  tasks:    GET  /tasks
+  grade:    POST /grade
+  metadata: GET  /metadata
 
 baseline_script: "inference.py"
 docker: true
