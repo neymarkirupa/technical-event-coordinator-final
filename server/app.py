@@ -12,13 +12,12 @@ from typing import Dict
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 from env.environment import TechnicalEventEnv, Action
 from env.grader import grade_task
 from env.tasks import get_all_tasks, get_task
-from server.landing_ui import UI_HTML
 
 logger = logging.getLogger(__name__)
 
@@ -60,21 +59,17 @@ class StepRequest(BaseModel):
     assignments: Dict[str, str]
 
 
-# ---------- HTML landing page -----------------------------------------------
+# ---------- routes ----------------------------------------------------------
 
-@app.get("/", response_class=HTMLResponse, include_in_schema=False)
-def root():
-    """Primary Space landing page with interactive dashboard."""
-    return UI_HTML
+@app.get("/")
+def landing():
+    """Health-check landing page returned on GET /."""
+    return {
+        "service": "Technical Event Coordinator",
+        "version": "1.1.0",
+        "endpoints": ["/reset", "/step", "/grade", "/tasks", "/health"],
+    }
 
-
-@app.get("/ui", response_class=HTMLResponse, include_in_schema=False)
-def ui():
-    """Alternative path to the dashboard UI."""
-    return UI_HTML
-
-
-# ---------- core routes -----------------------------------------------------
 
 @app.post("/reset")
 async def reset_env(request: Request):
