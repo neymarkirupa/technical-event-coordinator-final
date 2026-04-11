@@ -27,7 +27,7 @@ _env_lock = threading.Lock()
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(_app: FastAPI):
     """Initialise default environment on startup."""
     logger.info("Technical Event Coordinator starting up")
     yield
